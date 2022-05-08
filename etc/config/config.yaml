@@ -1,0 +1,4 @@
+peerName: node1
+peers:
+  - name: node1
+    url: http://127.0.0.1:4233
