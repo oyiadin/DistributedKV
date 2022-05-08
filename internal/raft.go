@@ -1,8 +1,8 @@
 package internal
 
-type Peer struct {
+type RaftPeer struct {
 }
 
 type Raft struct {
-	Peer []Peer
+	Peer []RaftPeer
 }

@@ -10,6 +10,22 @@ type Response struct {
 	Items []ResponseItem
 }
 
+func (r Response) ToMap() (*H, error) {
+	results := H{}
+	results["count"] = r.Count
+	items := make([]H, r.Count)
+
+	for index, item := range r.Items {
+		itemMap := H{}
+		itemMap["value"] = item.Value
+		itemMap["success"] = item.Success
+		items[index] = itemMap
+	}
+	results["items"] = items
+
+	return &results, nil
+}
+
 func MakeResponseOfFailure(message string) *Response {
 	return &Response{
 		Count: 1,

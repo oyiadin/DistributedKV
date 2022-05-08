@@ -11,12 +11,35 @@ import (
 	"path"
 )
 
+type ConfigPeer struct {
+	Name string
+	URL  string `yaml:"url"`
+}
+
 type Config struct {
-	Peers []struct {
-		Name string
-		URL  string `yaml:"url"`
-	}
+	Peers    []ConfigPeer
 	PeerName string
+
+	initialized bool
+	peerSelf    *ConfigPeer
+}
+
+func (c *Config) Init() error {
+	if c.initialized {
+		return nil
+	}
+
+	for _, peer := range c.Peers {
+		if peer.Name == c.PeerName {
+			c.peerSelf = &peer
+			break
+		}
+	}
+	if c.peerSelf == nil {
+		return errors.New("cannot find peer with name " + c.PeerName)
+	}
+
+	return nil
 }
 
 func loadConfigWithFilename(fromDirectories []string, filename string) (map[interface{}]interface{}, error) {
@@ -67,6 +90,10 @@ func (c *Config) LoadFrom(fromDirectories []string) error {
 		return err
 	}
 
+	err = c.Init()
+	if err != nil {
+		return err
+	}
 	log.Println("succeeded to load config!")
 	return err
 }
